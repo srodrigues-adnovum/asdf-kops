@@ -7,7 +7,7 @@ install_kops() {
   local install_type=$1
   local version=$2
   local install_path=$3
-  local platform="$(uname | tr '[:upper:]' '[:lower:]')-$(get_arch)"
+  local platform="$(get_os)-$(get_arch)"
   local bin_install_path="$install_path/bin"
   local binary_path="$bin_install_path/kops"
   local download_url=$(get_download_url $version $platform)
@@ -31,11 +31,18 @@ install_kops() {
   fi
 }
 
+get_os() {
+  case "$(uname -s)" in
+    Windows_NT | MINGW64*) echo "windows" ;;               
+    *) uname | tr '[:upper:]' '[:lower:]' ;;
+  esac
+}
+
 get_arch() {
   ARCH=$(uname -m)
   case $ARCH in
     x86_64) ARCH="amd64";;
-    arm64|aarch64) ARCH="arm64";;
+    arm64 | aarch64) ARCH="arm64";;
   esac
   echo "$ARCH"
 }
